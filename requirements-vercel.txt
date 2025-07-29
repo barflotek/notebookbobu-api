@@ -18,6 +18,3 @@ python-jose[cryptography]==3.3.0
 
 # Pydantic settings
 pydantic-settings==2.10.1
-
-# JWT for authentication
-PyJWT==2.10.1

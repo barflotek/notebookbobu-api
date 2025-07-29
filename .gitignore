@@ -16,3 +16,4 @@ venv/
 .vscode/
 .vercel/
 test_simple.py
+.vercel
