@@ -1,0 +1,18 @@
+# NotebookBobu API
+*.pyc
+__pycache__/
+.env
+.DS_Store
+node_modules/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+.venv/
+venv/
+.idea/
+.vscode/
+.vercel/
+test_simple.py

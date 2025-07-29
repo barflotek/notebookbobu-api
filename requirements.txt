@@ -1,0 +1,30 @@
+# Core API Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+python-dotenv==1.0.0
+
+# Database & Storage
+supabase==2.3.4
+psycopg2-binary==2.9.9
+
+# AI & ML
+openai==1.3.5
+elevenlabs==0.2.26
+
+# NotebookLlama Dependencies
+llama-index==0.9.15
+llama-cloud==0.0.6
+
+# Utilities
+pydantic==2.5.0
+httpx==0.25.2
+aiofiles==23.2.1
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Development
+pytest==7.4.3
+pytest-asyncio==0.21.1
+black==23.11.0
+flake8==6.1.0
