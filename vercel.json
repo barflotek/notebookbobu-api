@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "notebookbobu-api",
   "builds": [
     {
       "src": "app/main.py",
@@ -15,10 +14,5 @@
   ],
   "env": {
     "PYTHONPATH": "."
-  },
-  "functions": {
-    "app/main.py": {
-      "maxDuration": 300
-    }
   }
 }
