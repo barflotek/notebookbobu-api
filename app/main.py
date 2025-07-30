@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 import os
 import time
 
-from app.api.routes import documents, chat, health, documents_v2, auth
+from app.api.routes import documents, chat, health, documents_v2, auth, debug
 from app.core.config import settings
 from app.middleware.api_key_auth import api_key_auth
 
@@ -46,6 +46,7 @@ app.add_middleware(
 # Include routers with API key authentication
 app.include_router(health.router, prefix="/api", tags=["health"])
 app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
+app.include_router(debug.router, prefix="/api/debug", tags=["debug"])
 app.include_router(
     documents.router, 
     prefix="/api", 
