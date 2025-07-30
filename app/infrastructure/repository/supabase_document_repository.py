@@ -59,7 +59,7 @@ class SupabaseDocumentRepository(DocumentRepositoryInterface):
     async def get_documents_by_user(self, user_id: str, limit: int = 50, offset: int = 0) -> List[Document]:
         """Get documents for a user with pagination"""
         
-        results = await self.db.get_documents_by_user(user_id, limit, offset)
+        results = await self.db.get_user_documents(user_id, limit, offset)
         return [self._map_to_document(result) for result in results]
     
     async def update_document(self, document: Document) -> Document:
