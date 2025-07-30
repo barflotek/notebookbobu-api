@@ -3,14 +3,15 @@ NotebookBobu API Service
 Production-ready FastAPI service for document processing and AI analysis
 """
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import os
 import time
 
-from app.api.routes import documents, chat, health, documents_v2
+from app.api.routes import documents, chat, health, documents_v2, auth
 from app.core.config import settings
+from app.middleware.api_key_auth import api_key_auth
 
 
 @asynccontextmanager
@@ -42,11 +43,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include routers
+# Include routers with API key authentication
 app.include_router(health.router, prefix="/api", tags=["health"])
-app.include_router(documents.router, prefix="/api", tags=["documents"])
-app.include_router(documents_v2.router, prefix="/api", tags=["documents-v2"])
-app.include_router(chat.router, prefix="/api", tags=["chat"])
+app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
+app.include_router(
+    documents.router, 
+    prefix="/api", 
+    tags=["documents"],
+    dependencies=[Depends(api_key_auth)]
+)
+app.include_router(
+    documents_v2.router, 
+    prefix="/api", 
+    tags=["documents-v2"],
+    dependencies=[Depends(api_key_auth)]
+)
+app.include_router(
+    chat.router, 
+    prefix="/api", 
+    tags=["chat"],
+    dependencies=[Depends(api_key_auth)]
+)
 
 
 @app.get("/")
