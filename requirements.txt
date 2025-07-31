@@ -1,0 +1,5 @@
+fastapi>=0.100.0
+python-multipart
+python-dotenv
+openai
+llama-parse
