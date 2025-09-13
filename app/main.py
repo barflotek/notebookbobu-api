@@ -12,6 +12,7 @@ import time
 from app.api.routes import documents, chat, health, documents_v2, auth, debug, clients
 from app.core.config import settings
 from app.middleware.api_key_auth import api_key_auth
+from app.middleware.behavioral_tracking import BehavioralTrackingMiddleware
 
 
 @asynccontextmanager
@@ -42,6 +43,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Behavioral tracking middleware for intelligence system
+app.add_middleware(BehavioralTrackingMiddleware)
 
 # Include routers with API key authentication
 app.include_router(health.router, prefix="/api", tags=["health"])

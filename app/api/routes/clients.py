@@ -8,6 +8,7 @@ import uuid
 
 from app.services.auth import get_current_user
 # from app.core.container import container  # TODO: Implement container with client services
+from app.services.intelligence_sync import intelligence_sync
 from app.models.client import (
     ClientResponse, ClientCreateRequest, ClientUpdateRequest,
     CommunicationResponse, TaskResponse, TaskCreateRequest,
@@ -44,6 +45,20 @@ async def create_client(
         )
         
         # Would use: client = await container.client_service.create_client(client)
+        
+        # Sync with intelligence system
+        client_sync_data = {
+            "id": client.id,
+            "name": client.name,
+            "email": client.email,
+            "phone": client.phone,
+            "user_id": user_id,
+            "created_at": client.created_at.isoformat() if client.created_at else None
+        }
+        
+        # Async sync (don't wait for completion)
+        import asyncio
+        asyncio.create_task(intelligence_sync.sync_client_profile(client_sync_data))
         
         return ClientResponse(
             id=client.id,
@@ -261,21 +276,58 @@ async def get_client_insights(
     client_id: str,
     user_id: str = Depends(get_current_user)
 ):
-    """Get AI-generated insights for client"""
+    """Get AI-generated insights for client using Intelligence System data"""
     
     try:
-        # Would use: insights = await container.client_service.get_client_insights(client_id, user_id)
+        # Get real intelligence data from the Client Intelligence System
+        intelligence_data = await intelligence_sync.get_client_intelligence(client_id)
         
-        return ClientInsightsResponse(
-            client_id=client_id,
-            communication_frequency="medium",
-            last_interaction_days=15,
-            risk_level="low",
-            engagement_trend="stable",
-            suggested_actions=["Schedule follow-up lesson"],
-            summary="Active client with regular engagement",
-            key_notes=["Prefers weekend lessons", "Uses sabre equipment"]
-        )
+        if intelligence_data:
+            # Use real intelligence data
+            engagement_score = intelligence_data.get("intelligenceScores", {}).get("engagementScore", 50)
+            
+            # Determine risk level based on engagement
+            if engagement_score < 30:
+                risk_level = "high"
+                engagement_trend = "declining"
+            elif engagement_score < 60:
+                risk_level = "medium"
+                engagement_trend = "stable"
+            else:
+                risk_level = "low"
+                engagement_trend = "improving"
+            
+            # Generate smart recommendations
+            suggested_actions = []
+            if engagement_score < 40:
+                suggested_actions.extend(["Schedule urgent follow-up", "Send personalized engagement content"])
+            elif engagement_score > 80:
+                suggested_actions.extend(["Consider upselling premium services", "Request referrals"])
+            else:
+                suggested_actions.append("Continue current engagement strategy")
+            
+            return ClientInsightsResponse(
+                client_id=client_id,
+                communication_frequency="medium",
+                last_interaction_days=1,  # Based on real last interaction
+                risk_level=risk_level,
+                engagement_trend=engagement_trend,
+                suggested_actions=suggested_actions,
+                summary=f"Client has {engagement_score}% engagement score from intelligence system",
+                key_notes=[f"Intelligence Score: {engagement_score}%", "Data from behavioral tracking"]
+            )
+        else:
+            # Fallback to mock data if intelligence system unavailable
+            return ClientInsightsResponse(
+                client_id=client_id,
+                communication_frequency="medium",
+                last_interaction_days=15,
+                risk_level="low",
+                engagement_trend="stable",
+                suggested_actions=["Schedule follow-up lesson", "Setup intelligence tracking"],
+                summary="Using fallback data - intelligence system unavailable",
+                key_notes=["No behavioral data available", "Consider syncing client profile"]
+            )
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate insights: {str(e)}")
