@@ -1,0 +1,31 @@
+{
+  "name": "client-intelligence-system",
+  "version": 2,
+  "builds": [
+    {
+      "src": "build/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "build/server.js"
+    }
+  ],
+  "env": {
+    "DATABASE_URI": "@database-uri",
+    "PAYLOAD_SECRET": "@payload-secret",
+    "PAYLOAD_CONFIG_PATH": "src/payload-simple.config.ts",
+    "NODE_ENV": "production",
+    "PORT": "3000",
+    "NOTEBOOKBOBU_API_URL": "https://notebookbobu-heq01jc0t-sentinel-io.vercel.app",
+    "NOTEBOOKBOBU_API_KEY": "@notebookbobu-api-key",
+    "JWT_SECRET": "@jwt-secret"
+  },
+  "functions": {
+    "build/server.js": {
+      "maxDuration": 30
+    }
+  }
+}

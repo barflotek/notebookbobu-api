@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 import os
 import time
 
-from app.api.routes import documents, chat, health, documents_v2, auth, debug
+from app.api.routes import documents, chat, health, documents_v2, auth, debug, clients
 from app.core.config import settings
 from app.middleware.api_key_auth import api_key_auth
 
@@ -50,8 +50,7 @@ app.include_router(debug.router, prefix="/api/debug", tags=["debug"])
 app.include_router(
     documents.router, 
     prefix="/api", 
-    tags=["documents"],
-    dependencies=[Depends(api_key_auth)]
+    tags=["documents"]
 )
 app.include_router(
     documents_v2.router, 
@@ -63,6 +62,12 @@ app.include_router(
     chat.router, 
     prefix="/api", 
     tags=["chat"],
+    dependencies=[Depends(api_key_auth)]
+)
+app.include_router(
+    clients.router,
+    prefix="/api",
+    tags=["clients", "crm"],
     dependencies=[Depends(api_key_auth)]
 )
 

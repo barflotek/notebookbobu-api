@@ -72,6 +72,10 @@ class Document(BaseModel):
     chunk_count: Optional[int] = None
     chunks: Optional[Dict[str, Any]] = None
     
+    # Client relationship (CRM integration)
+    client_id: Optional[str] = None  # Link to client entity
+    client_context: Optional[str] = None  # "email_attachment", "manual_upload", "analysis_request"
+    
     # Timestamps
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None

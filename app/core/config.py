@@ -14,17 +14,17 @@ class Settings(BaseSettings):
     """Application settings"""
     
     # Environment
-    ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
+    ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development").strip()
     
     # API Configuration
     API_V1_STR: str = "/api"
     PROJECT_NAME: str = "NotebookBobu API"
     
     # Security
-    JWT_SECRET: str = os.getenv("JWT_SECRET", "your-super-secret-jwt-key")
-    API_KEY: str = os.getenv("API_KEY", "your-internal-api-key")
-    INBOX_ZERO_API_KEY: str = os.getenv("INBOX_ZERO_API_KEY", "")  # Specific key for inbox-zero
-    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:3000")
+    JWT_SECRET: str = os.getenv("JWT_SECRET", "your-super-secret-jwt-key").strip()
+    API_KEY: str = os.getenv("API_KEY", "your-internal-api-key").strip()
+    INBOX_ZERO_API_KEY: str = os.getenv("INBOX_ZERO_API_KEY", "").strip()  # Specific key for inbox-zero
+    FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:3000").strip()
     
     # CORS
     ALLOWED_ORIGINS: List[str] = [

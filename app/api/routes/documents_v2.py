@@ -63,14 +63,12 @@ async def process_document_v2(
         processed_document = await document_service.process_document(document.id)
         
         return DocumentProcessResponse(
+            success=True,
             document_id=processed_document.id,
-            title=processed_document.title,
-            status=processed_document.status.value,
             summary=processed_document.processed_content or "Processing completed",
-            key_points=processed_document.metadata.get("key_points", []),
-            chunk_count=processed_document.chunk_count or 0,
-            file_size=processed_document.size,
-            processing_time=processed_document.metadata.get("processing_time")
+            bullet_points=str(processed_document.metadata.get("key_points", [])),
+            q_and_a=processed_document.metadata.get("q_and_a", "No Q&A available"),
+            mindmap_html=processed_document.metadata.get("mindmap_html", "No mindmap available")
         )
         
     except Exception as e:
@@ -95,8 +93,8 @@ async def list_documents_v2(
             DocumentResponse(
                 id=doc.id,
                 title=doc.title,
-                type=doc.type.value,
-                status=doc.status.value,
+                type=str(doc.type),  # Convert enum to string safely
+                status=str(doc.status),  # Convert enum to string safely
                 size=doc.size,
                 chunk_count=doc.chunk_count or 0,
                 hits=doc.hits,
@@ -129,8 +127,8 @@ async def get_document_v2(
         return DocumentResponse(
             id=document.id,
             title=document.title,
-            type=document.type.value,
-            status=document.status.value,
+            type=str(document.type),  # Convert enum to string safely
+            status=str(document.status),  # Convert enum to string safely
             size=document.size,
             chunk_count=document.chunk_count or 0,
             hits=document.hits,

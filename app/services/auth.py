@@ -11,12 +11,8 @@ from app.core.config import settings
 async def get_current_user(authorization: Optional[str] = Header(None)) -> str:
     """
     Extract user ID from authorization header
-    This should integrate with your inbox-zero auth system
+    Updated to work with API key authentication instead of JWT
     """
-    
-    # For development/testing - use a fixed user ID
-    if settings.ENVIRONMENT == "development":
-        return "test-user-123"
     
     if not authorization:
         raise HTTPException(status_code=401, detail="Authorization header required")
@@ -28,19 +24,30 @@ async def get_current_user(authorization: Optional[str] = Header(None)) -> str:
         
         token = authorization.split(" ")[1]
         
-        # Decode JWT token (adjust based on your auth system)
-        payload = jwt.decode(token, settings.JWT_SECRET, algorithms=["HS256"])
-        user_id = payload.get("sub")
+        # Validate API key
+        valid_keys = [
+            settings.API_KEY.strip() if settings.API_KEY else "",
+            settings.INBOX_ZERO_API_KEY.strip() if settings.INBOX_ZERO_API_KEY else "",
+        ]
+        valid_keys = [key for key in valid_keys if key and key.strip()]
         
-        if not user_id:
-            raise HTTPException(status_code=401, detail="Invalid token payload")
+        if not valid_keys:
+            raise HTTPException(status_code=401, detail="No API keys configured")
         
-        return user_id
+        # Check if token matches any valid API key
+        import secrets
+        for valid_key in valid_keys:
+            if secrets.compare_digest(token, valid_key):
+                # Return a user ID based on which API key was used
+                if token == settings.INBOX_ZERO_API_KEY.strip():
+                    return "inbox-zero-user"
+                else:
+                    return "api-user"
         
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token has expired")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(status_code=401, detail="Invalid API key")
+        
+    except HTTPException:
+        raise  # Re-raise HTTP exceptions as-is
     except Exception as e:
         raise HTTPException(status_code=401, detail=f"Authentication failed: {str(e)}")
 
