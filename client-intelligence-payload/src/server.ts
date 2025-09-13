@@ -2,25 +2,30 @@ import express from 'express'
 import payload from 'payload'
 
 require('dotenv').config()
-const app = express()
 
-// Redirect root to Admin panel
-app.get('/', (_, res) => {
-  res.redirect('/admin')
-})
+let app: express.Express
 
-const start = async () => {
+const initPayload = async (): Promise<express.Express> => {
+  if (app) return app
+
+  const expressApp = express()
+
   // Initialize Payload
   await payload.init({
     secret: process.env.PAYLOAD_SECRET!,
-    express: app,
+    express: expressApp,
     onInit: async () => {
       payload.logger.info(`Payload Admin URL: ${payload.getAdminURL()}`)
     },
   })
 
+  // Redirect root to Admin panel
+  expressApp.get('/', (_, res) => {
+    res.redirect('/admin')
+  })
+
   // Basic health check endpoint
-  app.get('/api/health', (req, res) => {
+  expressApp.get('/api/health', (req, res) => {
     res.json({
       status: 'healthy',
       service: 'Client Intelligence System',
@@ -29,25 +34,26 @@ const start = async () => {
     })
   })
 
-  // Start server
-  const PORT = process.env.PORT || 3001
-  
-  app.listen(PORT, async () => {
-    payload.logger.info(`
-🚀 Client Intelligence System is running!
-    
-Admin Panel: http://localhost:${PORT}/admin
-GraphQL:     http://localhost:${PORT}/api/graphql
-REST API:    http://localhost:${PORT}/api
-    
-Client Portal APIs:
-- Dashboard:      GET /api/client-dashboard/:clientId
-- Recommendations: GET /api/client-recommendations/:clientId  
-- Progress:       GET /api/client-progress/:clientId
-- Unified Portal: GET /api/unified-portal/:clientId
-- MindBody Sync:  POST /api/sync-mindbody/:clientId
-    `)
-  })
+  app = expressApp
+  return app
 }
 
-start()
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  const start = async () => {
+    const localApp = await initPayload()
+    const PORT = process.env.PORT || 3001
+    
+    localApp.listen(PORT, () => {
+      payload.logger.info(`🚀 Client Intelligence System is running on port ${PORT}!`)
+    })
+  }
+  
+  start().catch(console.error)
+}
+
+// Export for Vercel
+export default async (req: any, res: any) => {
+  const app = await initPayload()
+  return app(req, res)
+}

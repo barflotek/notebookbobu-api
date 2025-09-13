@@ -1,5 +1,4 @@
 {
-  "name": "client-intelligence-system",
   "version": 2,
   "builds": [
     {
@@ -14,18 +13,13 @@
     }
   ],
   "env": {
-    "DATABASE_URI": "@database-uri",
-    "PAYLOAD_SECRET": "@payload-secret",
-    "PAYLOAD_CONFIG_PATH": "src/payload-simple.config.ts",
+    "DATABASE_URI": "mongodb+srv://clientintel:JGPb1YVqlx7PQBkt@cluster1.w9hoji.mongodb.net/client-intelligence?retryWrites=true&w=majority&appName=Cluster1",
+    "PAYLOAD_SECRET": "super-secret-client-intelligence-key-2024-vercel",
+    "PAYLOAD_CONFIG_PATH": "build/payload-simple.config.js",
     "NODE_ENV": "production",
     "PORT": "3000",
     "NOTEBOOKBOBU_API_URL": "https://notebookbobu-heq01jc0t-sentinel-io.vercel.app",
-    "NOTEBOOKBOBU_API_KEY": "@notebookbobu-api-key",
-    "JWT_SECRET": "@jwt-secret"
-  },
-  "functions": {
-    "build/server.js": {
-      "maxDuration": 30
-    }
+    "NOTEBOOKBOBU_API_KEY": "inbox-zero-api-key-2024",
+    "JWT_SECRET": "jwt-secret-for-client-auth-2024-vercel"
   }
 }
