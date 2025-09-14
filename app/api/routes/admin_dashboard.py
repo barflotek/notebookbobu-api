@@ -1,14 +1,13 @@
 """
 Admin Dashboard Routes - Visual interface for Client Intelligence System
 """
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 import httpx
 from typing import Dict, Any
 import logging
 
-from app.services.auth import get_current_user
 from app.services.intelligence_sync import intelligence_sync
 
 logger = logging.getLogger(__name__)
@@ -46,7 +45,7 @@ async def admin_analytics(request: Request):
 
 # API endpoints for the dashboard
 @router.get("/admin/api/dashboard-data")
-async def get_dashboard_data(user_id: str = Depends(get_current_user)):
+async def get_dashboard_data():
     """Get dashboard data for visual interface"""
     try:
         # Mock dashboard data - in real app, query your database
@@ -84,7 +83,7 @@ async def get_dashboard_data(user_id: str = Depends(get_current_user)):
         }
 
 @router.get("/admin/api/clients-data")
-async def get_clients_data(user_id: str = Depends(get_current_user)):
+async def get_clients_data():
     """Get clients data for management interface"""
     try:
         # This would query your actual client database
@@ -106,7 +105,7 @@ async def get_clients_data(user_id: str = Depends(get_current_user)):
         return {"error": str(e), "clients": [], "total_count": 0}
 
 @router.get("/admin/api/intelligence-data")
-async def get_intelligence_data(user_id: str = Depends(get_current_user)):
+async def get_intelligence_data():
     """Get intelligence analytics data"""
     try:
         # This would aggregate intelligence data from MongoDB
@@ -135,8 +134,7 @@ async def get_intelligence_data(user_id: str = Depends(get_current_user)):
 @router.post("/admin/api/client/{client_id}/update-score")
 async def update_client_score(
     client_id: str, 
-    score_data: Dict[str, Any],
-    user_id: str = Depends(get_current_user)
+    score_data: Dict[str, Any]
 ):
     """Update client intelligence score"""
     try:
