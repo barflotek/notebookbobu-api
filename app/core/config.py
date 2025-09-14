@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     # Security
     JWT_SECRET: str = os.getenv("JWT_SECRET", "your-super-secret-jwt-key").strip()
     API_KEY: str = os.getenv("API_KEY", "your-internal-api-key").strip()
+    NOTEBOOKBOBU_API_KEY: str = os.getenv("NOTEBOOKBOBU_API_KEY", os.getenv("API_KEY", "your-internal-api-key")).strip()
     INBOX_ZERO_API_KEY: str = os.getenv("INBOX_ZERO_API_KEY", "").strip()  # Specific key for inbox-zero
     FRONTEND_URL: str = os.getenv("FRONTEND_URL", "http://localhost:3000").strip()
     
