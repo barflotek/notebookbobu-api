@@ -7,7 +7,7 @@
     "dev": "cross-env NODE_ENV=development nodemon",
     "build": "tsc",
     "build:payload": "cross-env NODE_ENV=production payload build",
-    "start": "cross-env NODE_ENV=production node build/server.js",
+    "start": "node build/server.js",
     "serve": "cross-env NODE_ENV=production payload serve",
     "generate:types": "cross-env NODE_ENV=development payload generate:types",
     "generate:graphQLSchema": "cross-env NODE_ENV=development payload generate:graphQLSchema",
