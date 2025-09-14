@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 import os
 import time
 
-from app.api.routes import documents, chat, health, documents_v2, auth, debug, clients
+from app.api.routes import documents, chat, health, documents_v2, auth, debug, clients, admin_dashboard
 from app.core.config import settings
 from app.middleware.api_key_auth import api_key_auth
 from app.middleware.behavioral_tracking import BehavioralTrackingMiddleware
@@ -73,6 +73,13 @@ app.include_router(
     prefix="/api",
     tags=["clients", "crm"],
     dependencies=[Depends(api_key_auth)]
+)
+
+# Admin Dashboard Routes (visual interface)
+app.include_router(
+    admin_dashboard.router,
+    prefix="",
+    tags=["admin-dashboard"]
 )
 
 

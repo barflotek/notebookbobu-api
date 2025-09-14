@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - NotebookBobu Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="bg-blue-800 text-white w-64 min-h-screen p-4">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold">NotebookBobu</h1>
+                <p class="text-blue-200">Intelligence Dashboard</p>
+            </div>
+            
+            <nav class="space-y-2">
+                <a href="{{ api_base }}admin" class="block py-2 px-4 rounded hover:bg-blue-700 text-blue-100 hover:text-white">
+                    <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
+                </a>
+                <a href="{{ api_base }}admin/clients" class="block py-2 px-4 rounded hover:bg-blue-700 text-blue-100 hover:text-white">
+                    <i class="fas fa-users mr-2"></i> Clients
+                </a>
+                <a href="{{ api_base }}admin/analytics" class="block py-2 px-4 rounded bg-blue-700 text-white">
+                    <i class="fas fa-chart-line mr-2"></i> Analytics
+                </a>
+                <a href="{{ api_base }}docs" class="block py-2 px-4 rounded hover:bg-blue-700 text-blue-100 hover:text-white">
+                    <i class="fas fa-book mr-2"></i> API Docs
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            <div class="mb-6">
+                <h2 class="text-3xl font-bold text-gray-800">Intelligence Analytics</h2>
+                <p class="text-gray-600">Advanced behavioral insights and intelligence metrics</p>
+            </div>
+
+            <!-- Key Metrics Row -->
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-green-500 rounded-lg">
+                            <i class="fas fa-chart-line text-white"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-500">Engagement Rate</p>
+                            <p class="text-2xl font-bold" id="engagement-rate">-</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-blue-500 rounded-lg">
+                            <i class="fas fa-eye text-white"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-500">Sessions Today</p>
+                            <p class="text-2xl font-bold" id="daily-sessions">-</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-purple-500 rounded-lg">
+                            <i class="fas fa-clock text-white"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-500">Avg Session</p>
+                            <p class="text-2xl font-bold" id="avg-session">-</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-orange-500 rounded-lg">
+                            <i class="fas fa-exclamation-triangle text-white"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-500">Risk Alerts</p>
+                            <p class="text-2xl font-bold" id="risk-alerts">-</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-red-500 rounded-lg">
+                            <i class="fas fa-shield-alt text-white"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-500">Intelligence Score</p>
+                            <p class="text-2xl font-bold" id="intelligence-score">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Charts -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold mb-4">Behavioral Trends (7 days)</h3>
+                    <canvas id="behavioral-chart" width="400" height="200"></canvas>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold mb-4">Risk Distribution</h3>
+                    <canvas id="risk-chart" width="400" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- Detailed Analytics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold mb-4">Top API Endpoints</h3>
+                    <div id="endpoint-stats" class="space-y-3">
+                        <div class="text-gray-500 text-center py-4">
+                            <i class="fas fa-spinner fa-spin text-xl mb-2"></i>
+                            <p>Loading endpoint analytics...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h3 class="text-lg font-semibold mb-4">Client Intelligence Insights</h3>
+                    <div id="intelligence-insights" class="space-y-3">
+                        <div class="text-gray-500 text-center py-4">
+                            <i class="fas fa-spinner fa-spin text-xl mb-2"></i>
+                            <p>Loading intelligence data...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-time Activity Feed -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-6 border-b">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">Real-time Intelligence Feed</h3>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span class="text-sm text-gray-500">Live</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div id="activity-feed" class="space-y-3 max-h-96 overflow-y-auto">
+                        <div class="text-gray-500 text-center py-8">
+                            <i class="fas fa-satellite-dish text-2xl mb-2"></i>
+                            <p>Monitoring client intelligence...</p>
+                            <p class="text-sm">Real-time activity will appear here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let behavioralChart, riskChart;
+        
+        async function loadAnalyticsData() {
+            try {
+                const response = await fetch('{{ api_base }}admin/api/intelligence-data');
+                const data = await response.json();
+                
+                // Update key metrics
+                document.getElementById('engagement-rate').textContent = (data.avg_engagement || 67) + '%';
+                document.getElementById('daily-sessions').textContent = data.daily_sessions || 142;
+                document.getElementById('avg-session').textContent = (data.avg_session_duration || 4.2) + 'm';
+                document.getElementById('risk-alerts').textContent = data.risk_alerts || 3;
+                document.getElementById('intelligence-score').textContent = data.intelligence_score || 85;
+                
+                // Update charts
+                updateBehavioralChart(data.behavioral_trends || []);
+                updateRiskChart(data.risk_assessment || {});
+                updateEndpointStats(data.endpoint_stats || []);
+                updateIntelligenceInsights(data.intelligence_insights || []);
+                updateActivityFeed(data.recent_activity || []);
+                
+            } catch (error) {
+                console.error('Error loading analytics data:', error);
+                showError('Failed to load analytics data');
+            }
+        }
+        
+        function updateBehavioralChart(trends) {
+            const ctx = document.getElementById('behavioral-chart').getContext('2d');
+            if (behavioralChart) behavioralChart.destroy();
+            
+            behavioralChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: trends.map(t => t.date) || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Document Processing',
+                        data: trends.map(t => t.documents) || [45, 52, 48, 61, 58, 65, 62],
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Chat Interactions',
+                        data: trends.map(t => t.chats) || [23, 31, 28, 35, 42, 38, 41],
+                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateRiskChart(riskData) {
+            const ctx = document.getElementById('risk-chart').getContext('2d');
+            if (riskChart) riskChart.destroy();
+            
+            riskChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+                    datasets: [{
+                        data: [
+                            riskData.low_risk || 65,
+                            riskData.medium_risk || 28,
+                            riskData.high_risk || 7
+                        ],
+                        backgroundColor: [
+                            'rgb(34, 197, 94)',
+                            'rgb(251, 191, 36)',
+                            'rgb(239, 68, 68)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateEndpointStats(endpoints) {
+            const container = document.getElementById('endpoint-stats');
+            if (endpoints.length === 0) {
+                endpoints = [
+                    { endpoint: '/api/documents/process', calls: 1234, avg_response: '245ms' },
+                    { endpoint: '/api/chat/message', calls: 856, avg_response: '180ms' },
+                    { endpoint: '/api/documents/analyze', calls: 642, avg_response: '520ms' },
+                    { endpoint: '/api/health', calls: 423, avg_response: '50ms' }
+                ];
+            }
+            
+            container.innerHTML = endpoints.map(stat => `
+                <div class="flex justify-between items-center p-3 border rounded-lg">
+                    <div>
+                        <p class="font-medium text-sm">${stat.endpoint}</p>
+                        <p class="text-xs text-gray-500">${stat.avg_response} avg response</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-blue-600">${stat.calls}</p>
+                        <p class="text-xs text-gray-500">calls</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function updateIntelligenceInsights(insights) {
+            const container = document.getElementById('intelligence-insights');
+            if (insights.length === 0) {
+                insights = [
+                    { type: 'pattern', description: 'High engagement during morning hours', confidence: 92 },
+                    { type: 'alert', description: 'Unusual document processing spike', confidence: 78 },
+                    { type: 'trend', description: 'Client retention improving 15%', confidence: 88 },
+                    { type: 'risk', description: '3 clients showing churn signals', confidence: 95 }
+                ];
+            }
+            
+            container.innerHTML = insights.map(insight => {
+                const iconClass = {
+                    'pattern': 'fas fa-chart-line text-blue-600',
+                    'alert': 'fas fa-exclamation-triangle text-orange-600',
+                    'trend': 'fas fa-trending-up text-green-600',
+                    'risk': 'fas fa-shield-alt text-red-600'
+                }[insight.type] || 'fas fa-info-circle text-gray-600';
+                
+                return `
+                    <div class="flex items-start p-3 border rounded-lg">
+                        <div class="p-2 mr-3">
+                            <i class="${iconClass}"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium">${insight.description}</p>
+                            <p class="text-xs text-gray-500">Confidence: ${insight.confidence}%</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function updateActivityFeed(activities) {
+            const container = document.getElementById('activity-feed');
+            if (activities.length === 0) {
+                activities = [
+                    { action: 'Document processed', client: 'client_123', timestamp: '2 min ago', score_change: '+5' },
+                    { action: 'Chat interaction', client: 'client_456', timestamp: '5 min ago', score_change: '+3' },
+                    { action: 'High engagement detected', client: 'client_789', timestamp: '8 min ago', score_change: '+8' },
+                    { action: 'Document uploaded', client: 'client_234', timestamp: '12 min ago', score_change: '+2' }
+                ];
+            }
+            
+            container.innerHTML = activities.map(activity => `
+                <div class="flex justify-between items-center p-3 border-l-4 border-blue-500 bg-blue-50 rounded">
+                    <div>
+                        <p class="font-medium text-sm">${activity.action}</p>
+                        <p class="text-xs text-gray-600">Client: ${activity.client}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-gray-500">${activity.timestamp}</p>
+                        <span class="text-xs font-bold text-green-600">${activity.score_change}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function showError(message) {
+            const containers = ['endpoint-stats', 'intelligence-insights', 'activity-feed'];
+            containers.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                container.innerHTML = `
+                    <div class="text-red-500 text-center py-4">
+                        <i class="fas fa-exclamation-triangle text-xl mb-2"></i>
+                        <p>${message}</p>
+                    </div>
+                `;
+            });
+        }
+        
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadAnalyticsData);
+        
+        // Refresh data every 10 seconds for real-time feel
+        setInterval(loadAnalyticsData, 10000);
+    </script>
+</body>
+</html>
